@@ -21,8 +21,6 @@ app.get("/", function (req, res) {
 
 const isValidDate = (date) => date instanceof Date && !isNaN(date);
 
-const hasMillisecondsFormat = (date) => date.split("-").length === 1;
-
 // your first API endpoint... 
 app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
@@ -34,7 +32,7 @@ app.get("/api/:date?", (req, res) => {
   if(!incomingDate){
     date = new Date();
   } 
-  else if(hasMillisecondsFormat(incomingDate)){
+  else if(!isNaN(incomingDate)){
     date = new Date(parseInt(incomingDate));
   }
   else {
@@ -45,12 +43,12 @@ app.get("/api/:date?", (req, res) => {
     const utc = date.toUTCString();
     const unix = Date.parse(utc);
 
-    return res.json({ unix , utc });
+    return res.status(200).json({ unix , utc });
   }
-  return res.json({ error : "Invalid Date" });
+  return res.status(400).json({ error : "Invalid Date" });
 })
 
 // listen for requests :)
-var listener = app.listen(process.env.PORT, function () {
+var listener = app.listen(8080, function () {
   console.log('Your app is listening on port ' + listener.address().port);
 });
